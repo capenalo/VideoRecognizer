@@ -1,29 +1,28 @@
 package application;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
+
 import org.opencv.core.Core;
-import org.opencv.core.Core.MinMaxLocResult;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
 import org.opencv.videoio.VideoCapture;
 
 import javafx.application.Platform;
@@ -70,41 +69,19 @@ public class FXtutController {
 	private Stage stage;
 	// the JavaFX file chooser
 	private FileChooser fileChooser;
-	// support variables
-	private Mat image;
-	private Mat image2;
-	private List<Mat> planes;
-	// the final complex image
-	private Mat complexImage;
-	// a timer for acquiring the video stream
-	private ScheduledExecutorService timer;
-	// the OpenCV object that realizes the video capture
-	// private VideoCapture capture = new VideoCapture();
-	// a flag to change the button behavior
-	// private boolean cameraActive = false;
-	private Mat logo;
-
-	/**
-	 * The action triggered by pushing the button on the GUI
-	 * 
-	 * @param event
-	 *            the push button event
-	 */
+	private String inputImage;
+	private FeatureModel fm;
 
 	public void initialize() {
-		// this.capture = new VideoCapture();
-		// this.cameraActive = false;
 		this.fileChooser = new FileChooser();
-		this.image = new Mat();
-		this.image2 = new Mat();
-		this.planes = new ArrayList<>();
-		this.complexImage = new Mat();
+		this.fm = new FeatureModel();
 	}
 
 	@FXML
-	protected void loadImage() {
+	protected void loadImage() throws IOException {
 		// show the open dialog window
 		File file = this.fileChooser.showOpenDialog(this.stage);
+<<<<<<< HEAD
 		Mat frame = new Mat();
 		Image imageToShow = null;
 
@@ -385,5 +362,12 @@ public class FXtutController {
 	protected void loadLogo() {
 		if (logoCheckBox.isSelected())
 			this.logo = Imgcodecs.imread("resources/download.png");
+=======
+		// the line that reads the image file
+		inputImage = file.getAbsolutePath();
+		System.out.println(inputImage.toString());
+		// work with the image here ...
+		fm.processImage(this.inputImage);
+>>>>>>> 2f8223249825675344c4842842d59d29353e58ae
 	}
 }
