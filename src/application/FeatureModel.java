@@ -16,7 +16,7 @@ import javafx.scene.image.Image;
 
 public class FeatureModel {
 
-	private File dir = new File("/Users/camilapenaloza/VideoRecognizer/resources");
+	private File dir = new File("/Users/foyvandolsen/Documents/workspace/VideoRecognizer/resources");
 	private File[] directoryListing = dir.listFiles();
 	private Mat inputHistogram;
 	private Mat inputContour;
@@ -29,7 +29,7 @@ public class FeatureModel {
 		// read the image in gray scale
 		Mat imageMat = Imgcodecs.imread(inputImageLocation, Imgcodecs.CV_LOAD_IMAGE_COLOR);
 		this.inputHistogram = this.colorExt.extractHistogram(imageMat, false);
-		this.histogramLookup();
+		//this.histogramLookup();
 		
 		this.inputContour = this.contourExt.extractContour(imageMat);
 		this.contourLookup();

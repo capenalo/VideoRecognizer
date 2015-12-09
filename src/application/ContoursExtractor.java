@@ -48,7 +48,7 @@ public class ContoursExtractor {
 	public double compareContours(Mat contourA, Mat contourB) {
 		int result_cols = Math.abs(contourB.cols() - contourA.cols() + 1);
 		int result_rows = Math.abs(contourB.rows() - contourA.rows() + 1);
-		int matchMethod = 5;
+		int matchMethod = 3;
 		double percentage;
 		
 		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
