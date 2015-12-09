@@ -132,32 +132,27 @@ public class FXtutController {
 				// this.antitransformedImage.setImage(null);
 			}
 			// calc the histogram default grayscale to false
-			this.showHistogram(image, false);
+//			this.showHistogram(image, false);
+			this.compareContours(image, false);
 			imageToShow = mat2Image(image);
 
 		}
 	}
 
-	private void showHistogram(Mat frame, boolean gray) {
-		// Split the frames in multiple images
-		List<Mat> images = new ArrayList<Mat>();
-		List<Mat> images2 = new ArrayList<Mat>();
-		List<Double> histDists = new ArrayList<Double>();
-
+	private void compareContours(Mat frame, boolean gray){
+		
 		File dir = new File("/Users/foyvandolsen/Documents/workspace/VideoRecognizer/resources");
 		File[] directoryListing = dir.listFiles();
-		//Generate the countours of the loaded image
+		
 		Mat contImg = new Mat();
-		Mat contImg2 = Imgcodecs.imread("/Users/foyvandolsen/Documents/workspace/VideoRecognizer/resources/AliceImages/AliceFrame01841.png", Imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+		Mat contImg2 = Imgcodecs.imread("/Users/foyvandolsen/Documents/workspace/VideoRecognizer/resources/CivilWarImages/AliceFrame00081.png", Imgcodecs.CV_LOAD_IMAGE_COLOR);
 		Imgproc.cvtColor(frame, contImg, Imgproc.COLOR_RGB2GRAY);
-//		Mat imageHSV = new Mat(contImg.size(), CvType.CV_8U);
-//		Mat imageBlurr = new Mat(contImg.size(), CvType.CV_8U);
-//		
-//		contImg.convertTo(contImg, CvType.CV_8U);
+		Imgproc.cvtColor(contImg2, contImg2, Imgproc.COLOR_RGB2GRAY);
+		
 		Mat imageBlurr = new Mat();
 		Mat imageA = new Mat();
 		Mat imageB = new Mat();
-				
+		Mat diff = new Mat();
 		//Process contImg
 		Imgproc.GaussianBlur(contImg, imageBlurr, new Size(5,5), 0);
 		Imgproc.adaptiveThreshold(imageBlurr, imageA, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 7, 5);
@@ -191,21 +186,48 @@ public class FXtutController {
 			}
 		}
 		
-		//Process contImg2
-		
 		resultImageOne.setImage(this.mat2Image(imageA));
 		resultImageTwo.setImage(this.mat2Image(imageB));
-		int result_cols = imageA.cols() - imageB.cols() + 1;
-		int result_rows = imageA.rows() - imageB.rows() + 1;
+		int result_cols = imageB.cols() - imageA.cols() + 1;
+		int result_rows = imageB.rows() - imageA.rows() + 1;
+		int matchMethod = 5;
+		double minVal, maxVal;
+		double percentage;
+		Point minLoc; Point maxLoc;
+		
 		Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
-		Imgproc.matchTemplate(imageA, imageB, result, Imgproc.TM_CCOEFF_NORMED);
+		
+		
+		Imgproc.matchTemplate(imageA, imageB, result, matchMethod);
+		
+		
+		
+		//Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
 		MinMaxLocResult mmr = Core.minMaxLoc(result);
-		Point matchLoc = mmr.maxLoc;
+		
+		Point matchLoc;
+		if(matchMethod == Imgproc.TM_SQDIFF || matchMethod == Imgproc.TM_SQDIFF_NORMED){
+			percentage = 1-mmr.minVal;
+		}else{
+			percentage= mmr.maxVal;
+		}
 //		System.out.println(mmr.);
-		Imgproc.rectangle(contImg, matchLoc, new Point(matchLoc.x + imageB.cols(),
-	            matchLoc.y + imageB.rows()), new Scalar(0, 255, 0));
-		System.out.println(matchLoc);
+//		Imgproc.rectangle(contImg, matchLoc, new Point(matchLoc.x + imageB.cols(),
+//	            matchLoc.y + imageB.rows()), new Scalar(0, 255, 0));
+		System.out.println(percentage);
 //		resultImageTwo.setImage(this.mat2Image(contImg));
+		
+	}
+	
+	private void showHistogram(Mat frame, boolean gray) {
+		// Split the frames in multiple images
+		List<Mat> images = new ArrayList<Mat>();
+		List<Mat> images2 = new ArrayList<Mat>();
+		List<Double> histDists = new ArrayList<Double>();
+
+		File dir = new File("/Users/foyvandolsen/Documents/workspace/VideoRecognizer/resources");
+		File[] directoryListing = dir.listFiles();
+
 		//Generate histogram of the loaded image
 		Core.split(frame, images);
 
@@ -341,7 +363,7 @@ public class FXtutController {
 							histDists.add(histogramDistance);
 							// System.out.println(histImage.dump() + "\n");
 							// System.out.println("\n" + histImage2.dump());
-							System.out.println(histogramDistance);
+							//System.out.println(histogramDistance);
 							// this.histogram.setImage(histImg);
 						}
 					}
